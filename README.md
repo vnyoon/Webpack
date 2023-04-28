@@ -36,3 +36,106 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
   * 自动发布：更新完代码后，自动构建出线上发布代码并传输给发布系统；
 
 构建其实是工程化、自动化思想在前端开发中的体现，把一系列流程用代码去实现，让代码自动化地执行这一系列复杂的流程。 构建给前端开发注入了更大的活力，解放了我们的生产力；
+
+### 1-2 安装与使用
+最新的webpack正式版本是：
+<br />
+<br />
+<img src="https://img.shields.io/npm/v/webpack.svg?label=webpack&amp;style=flat-square&amp;maxAge=3600" alt="GitHub release">
+
+在开始给项目加入构建前，新建一个目录`02_安装与使用`，再进入项目根目录执行`npm init`来初始化最简单的采用了模块化开发的项目；
+
+#### 本地安装
+  * 要安装 Webpack 到本项目，可按照你的需要选择以下任意命令运行：
+    ```js
+    // npm i -D 是 npm install --save-dev 的简写，是指安装模块并保存到 package.json 的 devDependencies
+
+    // 安装最新稳定版
+    npm i -D webpack
+
+    // 安装指定版本
+    npm i -D webpack@<version>
+
+    // 安装最新版本
+    npm i -D webpack@next
+    // 或特定的 tag/分支
+    npm install -D webpack/webpack#<tagname/branchname>
+    ```
+  * 安装完后你可以通过这些途径运行安装到本项目的 Webpack：
+    - 在项目根目录下对应的命令行里通过`node_modules/.bin/webpack`运行 Webpack 可执行文件；
+    - 在`Npm Script`里定义的任务会优先使用本项目下的 Webpack，代码如下：
+      ```js
+      "scripts": {
+        "build": "webpack --config webpack.config.js"
+      }
+      ```
+
+#### 全局安装
+通过 NPM 安装方式，可以使 webpack 在全局环境下可用：`npm install --global webpack`；
+此时在项目根目录下对应的命令行里通过输入`webpack`可以构建你的项目；
+
+> **Warning**
+>
+> **不推荐** 全局安装 webpack。这会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中， 可能会导致构建失败。
+
+#### 使用Webpack
+下面通过 Webpack 构建一个采用 CommonJS 模块化编写的项目，该项目有个网页会通过 JavaScript 在网页中显示`Hello，Webpack`；
+运行构建前，先把要完成该功能的最基础的 JavaScript 文件和 HTML 建立好，需要如下文件：
+  * 页面入口文件`index.html`
+    ```js
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+    </head>
+    <body>
+      <div id="app"></div>
+
+      <script src="./dist/bundle.js"></script>
+    </body>
+    </html>
+    ```
+  * JS 工具函数文件`show.js`
+    ```js
+    // 操作 DOM 元素，把 content 显示到网页上
+    function showContent(content) {
+      const appEle = window.document.getElementById('app');
+
+      appEle.innerText = 'Hello，' + content;
+    }
+
+    // 通过 CommonJS 规范导出 show 函数
+    module.exports = showContent;
+    ```
+  * JS 执行入口文件`main.js`
+    ```js
+    // 通过 CommonJS 规范导入 show 函数
+    const showContent = require('./show.js');
+
+    // 执行 show 函数
+    showContent('Webpack');
+    ```
+  * Webpack 在执行构建时默认会从项目根目录下的 webpack.config.js 文件读取配置，所以你还需要新建它，其内容如下：
+    ```js
+    const path = require('path');
+
+    module.exports = {
+      // JavaScript 执行入口文件
+      entry: './main.js',
+      // 输出
+      output: {
+        // 把所有依赖的模块合并输出到一个 bundle.js 文件
+        filename: 'bundle.js',
+        // 输出文件都放到 dist 目录下
+        path: path.resolve(__dirname, './dist')
+      }
+    }
+    ```
+> 由于 Webpack 构建运行在 Node.js 环境下，所以该文件最后需要通过 CommonJS 规范导出一个描述如何构建的`Object`对象。
+
+一切文件就绪，在项目根目录下执行`npm run build` or `npx webpack`命令运行 Webpack 构建，你会发现目录下多出一个 dist 目录，里面有个 bundle.js 文件， bundle.js 文件是一个可执行的 JavaScript 文件，它包含页面所依赖的两个模块 main.js 和 show.js 及内置的 webpackBootstrap 启动函数。 这时你用浏览器打开 index.html 网页将会看到 Hello，Webpack。
+
+Webpack 是一个打包模块化 JavaScript 的工具，它会从 `main.js` 出发，识别出源码中的模块化导入语句， 递归的寻找出入口文件的所有依赖，把入口和其所有依赖打包到一个单独的文件中。 从 Webpack2 开始，已经内置了对 `ES6、CommonJS、AMD` 模块化语句的支持。
