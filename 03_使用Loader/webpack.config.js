@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  mode: process.env.NODE_ENV === 'development' ? 'development' : 'production',
   // JavaScript 执行入口文件
   entry: './main.js',
   // 输出
