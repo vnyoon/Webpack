@@ -186,3 +186,88 @@ require('style-loader!css-loader!./main.css');
 ```
 这样就能指定对 `./main.css` 这个文件先采用 `css-loader` 再采用 `style-loader` 转换。
 
+### 1-4 使用Plugin
+Plugin 是用来扩展 Webpack 功能的，通过在构建流程里注入钩子实现，它给 Webpack 带来了很大的灵活性。
+
+通过 `npm i -D mini-css-extract-plugin` 把注入到`bundle.js`文件里的 CSS 提取到单独的文件中，配置修改如下：
+```js
+...
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  ...
+  module: {
+    rules: [
+      {
+        // 用正则去匹配要用该 loader 转换的 CSS 文件
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash:8].css"
+    })
+  ]
+}
+```
+
+重新执行构建，你会发现 dist 目录下多出一个 `main.6cb934d3.css` 文件，bundle.js 里也没有 CSS 代码了。但是，如果你从 webpack 入口处导入 CSS， `mini-css-extract-plugin` 则不会将这些 CSS 加载到页面中。请使用 `npm i -D html-webpack-plugin` 自动生成生成一个 HTML5 文件或者在创建 `index.html` 文件时使用 link 标签引入`./dist/main.6cb934d3.css`；
+```js
+//webpack.config.js
+...
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  ...
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash:8].css"
+    }),
+    // ./dist/index.html
+    // template：模板使用我们创建的index.html
+    // inject：js资源放入body元素里底部
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      inject: 'body'
+    })
+  ]
+}
+
+or
+
+// index.html
+<link rel="stylesheet" href="./dist/main.6cb934d3.css">
+```
+
+在使用`html-webpack-plugin`插件前应该把根目录`index.html`引入的资源(css、js...)删除，因为这个插件会在生成html时帮我们引入，但由于插件生成的模板是根目录index.html，所以会导致生成html有两次引入资源。通过插件生成的正确`dist/index.html`文件如下：
+```js
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Document</title>
+  <link href="main.6cb934d3.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app"></div>
+  <script defer="defer" src="bundle.js"></script>
+</body>
+
+</html>
+```
+
+Webpack 是通过 plugins 属性来配置需要使用的插件列表的。 plugins 属性是一个数组，里面的每一项都是插件的一个实例，在实例化一个组件时可以通过构造函数传入这个组件支持的配置属性。
+
+例如 MiniCssExtractPlugin 插件的作用是提取出 JavaScript 代码里的 CSS 到一个单独的文件。对此你可以通过插件的 `filename` 属性，告诉插件输出的 CSS 文件名称是通过 `[name].[contenthash:8].css` 字符串模版生成的：
+  * `[name]` 代表文件名称；
+  * `[contenthash:8]` 代表根据文件内容算出的8位 hash 值。使用 filename: "[contenthash].css" 启动长期缓存；
+  * 还有很多配置选项可以在 [MiniCssExtractPlugin](https://webpack.docschina.org/plugins/mini-css-extract-plugin/) 的主页上查到；
+  * 关于更多[html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin#options)配置；
+
+
