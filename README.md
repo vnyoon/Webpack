@@ -1,4 +1,4 @@
-## Webpack
+# Webpack
 [《深入浅出Webpack》](http://webpack.wuhaolin.cn) - [吴浩麟](https://github.com/gwuhaolin/dive-into-webpack) / 著；
 
 [Webpack](https://webpack.docschina.org/)是一个打包模块化 JavaScript 的工具，在 Webpack 里一切文件皆模块，通过 Loader 转换文件，通过 Plugin 注入钩子，最后输出由多个模块组合成的文件。Webpack 专注于构建模块化项目。
@@ -14,7 +14,7 @@ Webpack的优点是：
 
 Webpack的缺点是：只能用于采用模块化开发的项目；
 
-## 内容简介
+# 内容简介
 本书是国内第一本系统全面讲解 Webpack 的图书，涵盖了 Webpack 的入门、配置、实战、优化、原理；
   * [第1章](http://webpack.wuhaolin.cn/1%E5%85%A5%E9%97%A8/)教你从0开始学会使用 Webpack；
   * [第2章](http://webpack.wuhaolin.cn/2%E9%85%8D%E7%BD%AE/)详细的讲解了 Webpack 提供的常用配置项；
@@ -22,8 +22,8 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
   * [第4章](http://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/)罗列出了各种优化 Webpack 的手段；
   * [第5章](http://webpack.wuhaolin.cn/5%E5%8E%9F%E7%90%86/)剖析了 Webpack 原理以及如何开发 Plugin 和 Loader。
 
-## 一、入门
-### 1-1 为什么需要构建？
+# 一、入门
+## 1-1 为什么需要构建？
 感叹前端技术发展之快，各种可以提高开发效率的新思想和框架被发明。但是这些东西都有一个共同点：源代码无法直接运行，必须通过转换后才可以正常运行。
 
 构建就是做这件事情，把源代码转换成发布到线上的可执行 JavaScrip、CSS、HTML 代码，包括如下内容：
@@ -37,7 +37,7 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
 
 构建其实是工程化、自动化思想在前端开发中的体现，把一系列流程用代码去实现，让代码自动化地执行这一系列复杂的流程。 构建给前端开发注入了更大的活力，解放了我们的生产力；
 
-### 1-2 安装与使用
+## 1-2 安装与使用
 最新的webpack正式版本是：
 <br />
 <br />
@@ -45,7 +45,7 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
 
 在开始给项目加入构建前，新建一个目录`02_安装与使用`，再进入项目根目录执行`npm init`来初始化最简单的采用了模块化开发的项目；
 
-#### 本地安装
+### 本地安装
   * 要安装 Webpack 到本项目，可按照你的需要选择以下任意命令运行：
     ```js
     // npm i -D 是 npm install --save-dev 的简写，是指安装模块并保存到 package.json 的 devDependencies
@@ -70,7 +70,7 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
       }
       ```
 
-#### 全局安装
+### 全局安装
 通过 NPM 安装方式，可以使 webpack 在全局环境下可用：`npm install --global webpack`；
 此时在项目根目录下对应的命令行里通过输入`webpack`可以构建你的项目；
 
@@ -78,7 +78,7 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
 >
 > **不推荐** 全局安装 webpack。这会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中， 可能会导致构建失败。
 
-#### 使用Webpack
+### 使用Webpack
 下面通过 Webpack 构建一个采用 CommonJS 模块化编写的项目，该项目有个网页会通过 JavaScript 在网页中显示`Hello，Webpack`；
 运行构建前，先把要完成该功能的最基础的 JavaScript 文件和 HTML 建立好，需要如下文件：
   * 页面入口文件`index.html`
@@ -140,7 +140,7 @@ Webpack的缺点是：只能用于采用模块化开发的项目；
 
 Webpack 是一个打包模块化 JavaScript 的工具，它会从 `main.js` 出发，识别出源码中的模块化导入语句， 递归的寻找出入口文件的所有依赖，把入口和其所有依赖打包到一个单独的文件中。 从 Webpack2 开始，已经内置了对 `ES6、CommonJS、AMD` 模块化语句的支持。
 
-### 1-3 使用Loader
+## 1-3 使用Loader
 为项目引入 CSS 代码让文字居中显示，新建`main.css`的内容如下，Webpack把一切文件看作模块，CSS 文件也不例外，要在入口文件引入`main.css`需要像引入 JavaScript 文件那样，修改入口文件`main.js`，如下：
 ```js
 // main.css
@@ -186,7 +186,7 @@ require('style-loader!css-loader!./main.css');
 ```
 这样就能指定对 `./main.css` 这个文件先采用 `css-loader` 再采用 `style-loader` 转换。
 
-### 1-4 使用Plugin
+## 1-4 使用Plugin
 Plugin 是用来扩展 Webpack 功能的，通过在构建流程里注入钩子实现，它给 Webpack 带来了很大的灵活性。
 
 通过 `npm i -D mini-css-extract-plugin` 把注入到`bundle.js`文件里的 CSS 提取到单独的文件中，配置修改如下：
@@ -270,7 +270,7 @@ Webpack 是通过 plugins 属性来配置需要使用的插件列表的。 plugi
   * 还有很多配置选项可以在 [MiniCssExtractPlugin](https://webpack.docschina.org/plugins/mini-css-extract-plugin/) 的主页上查到；
   * 关于更多[html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin#options)配置；
 
-### 1-5 使用DevServer
+## 1-5 使用DevServer
 前面的操作只是让 Webpack 正常运行起来了，但在实际开发中你可能会需要：
   1. 提供 HTTP 服务而不是使用本地文件预览；
   2. 监听文件的变化并自动刷新网页，做到实时预览；
@@ -294,17 +294,29 @@ devServer: {
 }
 ```
 
-#### 实时预览
+### 实时预览
 接着上面的步骤，你可以试试修改 `main.js` `main.css` `show.js` `index.html` 中的任何一个文件，保存后你会发现浏览器会被自动刷新，运行出修改后的效果。
 
 Webpack 在启动时可以开启监听模式，开启监听模式后 Webpack 会监听本地文件系统的变化，发生变化时重新构建出新的结果。Webpack 默认是关闭监听模式的，你可以在启动 Webpack 时通过 webpack --watch 来开启监听模式。
 
 通过 DevServer 启动的 Webpack 会开启监听模式，当发生变化时重新执行完构建后通知 DevServer。 DevServer 会让 Webpack 在构建出的 JavaScript 代码里注入一个代理客户端用于控制网页，网页和 DevServer 之间通过 WebSocket 协议通信， 以方便 DevServer 主动向客户端发送命令。 DevServer 在收到来自 Webpack 的文件变化通知时通过注入的客户端控制网页刷新。
 
-#### 模块热替换
+### 模块热替换
 除了通过重新刷新整个网页来实现实时预览，DevServer 还有一种被称作模块热替换的刷新技术。 模块热替换能做到在不重新加载整个网页的情况下，通过将被更新过的模块替换老的模块，再重新执行一次来实现实时预览。 模块热替换相对于默认的刷新机制能提供更快的响应和更好的开发体验。模块热替换默认是关闭的，要开启模块热替换，你只需在启动 DevServer 时带上 `--hot` 参数，重启 DevServer 后再去更新文件就能体验到模块热替换了。
 
 > 从 `webpack-dev-server` v4.0.0 开始，热模块替换是默认开启的。
 
-#### 支持 Source Map
+### 支持 Source Map
 在浏览器中运行的 JavaScript 代码都是编译器输出的代码，这些代码的可读性很差。如果在开发过程中遇到一个不知道原因的 Bug，则你可能需要通过断点调试去找出问题。 在编译器输出的代码上进行断点调试是一件辛苦和不优雅的事情， 调试工具可以通过 Source Map 映射代码，让你在源代码上断点调试。 Webpack 支持生成 Source Map，只需在启动时带上 `--devtool source-map` 参数。加上参数重启 DevServer 后刷新页面，再打开 Chrome 浏览器的开发者工具，就可在 Sources 栏中看到可调试的源代码了。
+
+## 1-6 核心概念
+Webpack 有以下几个核心概念：
+  * Entry：入口，Webpack 执行构建的第一步将从 Entry 开始，可抽象成输入。
+  * Module：模块，在 Webpack 里一切皆模块，一个模块对应着一个文件。Webpack 会从配置的 Entry 开始递归找出所有依赖的模块。
+  * Chunk：代码块，一个 Chunk 由多个模块组合而成，用于代码合并与分割。
+  * Loader：模块转换器，用于把模块原内容按照需求转换成新内容。
+  * Plugin：扩展插件，在 Webpack 构建流程中的特定时机注入扩展逻辑来改变构建结果或做你想要的事情。
+  * Output：输出结果，在 Webpack 经过一系列处理并得出最终想要的代码后输出结果。
+
+Webpack 启动后会从 Entry 里配置的 Module 开始递归解析 Entry 依赖的所有 Module。 每找到一个 Module， 就会根据配置的 Loader 去找出对应的转换规则，对 Module 进行转换后，再解析出当前 Module 依赖的 Module。 这些模块会以 Entry 为单位进行分组，一个 Entry 和其所有依赖的 Module 被分到一个组也就是一个 Chunk。最后 Webpack 会把所有 Chunk 转换成文件输出。 在整个流程中 Webpack 会在恰当的时机执行 Plugin 里定义的逻辑。
+
