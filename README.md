@@ -320,3 +320,74 @@ Webpack 有以下几个核心概念：
 
 Webpack 启动后会从 Entry 里配置的 Module 开始递归解析 Entry 依赖的所有 Module。 每找到一个 Module， 就会根据配置的 Loader 去找出对应的转换规则，对 Module 进行转换后，再解析出当前 Module 依赖的 Module。 这些模块会以 Entry 为单位进行分组，一个 Entry 和其所有依赖的 Module 被分到一个组也就是一个 Chunk。最后 Webpack 会把所有 Chunk 转换成文件输出。 在整个流程中 Webpack 会在恰当的时机执行 Plugin 里定义的逻辑。
 
+# 二、配置
+配置 Webpack 的方式有两种：
+  1. 通过一个 JavaScript 文件描述配置，例如使用 `webpack.config.js` 文件里的配置；
+  2. 执行 Webpack 可执行文件时通过命令行参数传入，例如 `webpack --devtool source-map`；
+
+这两种方式可以相互搭配，例如执行 `Webpack` 时通过命令 `webpack --config webpack-dev.config.js` 指定配置文件，再去 `webpack-dev.config.js` 文件里描述部分配置。
+
+按照**配置方式**来划分，可分为：
+  * 只能通过命令行参数传入的选项，这种最为少见；
+  * 只能通过配置文件配置的选项；
+  * 通过两种方式都可以配置的选项；
+
+按照配置**所影响的功能**来划分，可分为：
+  * 2-0 Mode 配置相应模式的内置优化；
+  * 2-1 Entry 配置模块的入口；
+  * 2-2 Output 配置如何输出最终想要的代码；
+  * 2-3 Module 配置处理模块的规则；
+  * 2-4 Resolve 配置寻找模块的规则；
+  * 2-5 Plugins 配置扩展插件；
+  * 2-6 DevServer 配置 DevServer；
+  * 2-7 其它配置项 其它零散的配置项；
+  * 2-8 整体配置结构 整体地描述各配置项的结构；
+  * 2-9 多种配置类型 配置文件不止可以返回一个 Object，还有其他返回形式；
+  * 2-10 配置总结 寻找配置 Webpack 的规律，减少思维负担；
+
+## 2-0 Mode
+提供 mode 配置选项，告知 webpack 使用相应模式的内置优化。
+
+`string = 'production': 'none' | 'development' | 'production'`
+
+如果没有设置，webpack 会给 mode 的默认值设置为 production。
+
+### 用法
+  * 在配置对象中提供 mode 选项：
+    ```js
+    module.exports = {
+      mode: 'development',
+      // mode: 'production',
+      // mode: 'none',
+    };
+    ```
+  * 或者从 `CLI` 参数中传递：
+    ```js
+    npx webpack --mode=development
+    // npx webpack --mode=production
+    // npx webpack --mode=none
+    ```
+
+    > **Tip**
+    > 如果 `mode` 未通过配置或 `CLI` 赋值，`CLI` 将使用可能有效的 `NODE_ENV` 值作为 `mode`。 
+
+如果要根据 webpack.config.js 中的 mode 变量更改打包行为，则必须将配置导出为函数，而不是导出对象：
+```js
+var config = {
+  entry: './main.js',
+  //...
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === 'development') {
+    config.devtool = 'source-map'
+  };
+
+  if (argv.mode === 'production') {
+    //...
+  };
+
+  return config;
+}
+```
+
