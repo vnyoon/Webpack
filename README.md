@@ -391,3 +391,55 @@ module.exports = (env, argv) => {
 }
 ```
 
+## 2-1 Entry
+`entry` 是配置模块的入口，可抽象成输入，Webpack 执行构建的第一步将从入口开始搜寻及递归解析出所有入口依赖的模块；
+`entry` 配置是必填的，若不填则将导致 Webpack 报错退出；
+
+### context
+上下文是入口文件所处的目录的绝对路径的字符串；
+
+Webpack 在寻找相对路径的文件时会以 context 为根目录，context 默认为执行启动 Webpack 时所在的当前工作目录。 如果想改变 context 的默认配置，则可以在配置文件里这样设置它：
+```js
+module.exports = {
+  context: path.resolve(__dirname, 'app')
+}
+```
+还可以通过在启动 Webpack 时带上参数 `webpack --context` 来设置 `context`；
+
+### Entry类型
+Entry 类型可以是以下三种中的一种或者相互组合：
+类型 | 例子 | 含义
+---- | ---- | ----
+string | './app/entry' | 入口模块的文件路径，可以是相对路径。
+string | ['./app/entry1', './app/entry2'] | 入口模块的文件路径，可以是相对路径。
+string | { a: './app/entry-a', b: ['./app/entry-b1', './app/entry-b2'] } | 配置多个入口，每个入口生成一个 Chunk。
+
+如果是 `array` 类型，则搭配 `output.library` 配置项使用时，只有数组里的最后一个入口文件的模块会被导出；
+
+### Chunk 名称
+Webpack 会为每个生成的 Chunk 取一个名称，Chunk 的名称和 Entry 的配置有关：
+  * 如果传入一个字符串或字符串数组，就只会生成一个 chunk，这时 chunk 的名称会被命名为 main。
+  * 如果传入一个对象，就可能会出现多个 chunk，则每个属性的键(key)会是 chunk 的名称，该属性的值描述了 chunk 的入口点。
+
+### 配置动态 Entry
+假如项目里有多个页面需要为每个页面的入口配置一个 Entry ，但这些页面的数量可能会不断增长，则这时 Entry 的配置会受到到其他因素的影响导致不能写成静态的值。其解决方法是把 Entry 设置成一个函数去动态返回上面所说的配置，代码如下：
+```js
+// 同步函数
+entry: () => {
+  return {
+    a:'./pages/a',
+    b:'./pages/b',
+  }
+};
+
+// 异步函数
+entry: () => {
+  return new Promise((resolve)=>{
+    resolve({
+       a:'./pages/a',
+       b:'./pages/b',
+    });
+  });
+};
+```
+
